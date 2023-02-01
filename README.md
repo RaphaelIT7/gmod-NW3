@@ -3,6 +3,8 @@ The NW3 System is a combination of the NW and NW2 System.
 It internally uses the NW2 system for networking, but it allows one to decide if you want to use the PVS or not.  
 You should not use the NW3 System if you set NW3 vars every tick. It aims to improve the performance of all GetNW3 functions at the cost of the SetNW3 functions.
 
+If you experience engine crashes related to https://github.com/Facepunch/garrysmod-issues/issues/3744 please open an issue [here](https://github.com/RaphaelIT7/gmod-NW3/issues). (should hopefully never happen)
+
 ## Performance
 
 #### SetNW3* and SetGlobal3* Performance
