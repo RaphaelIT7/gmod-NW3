@@ -76,10 +76,12 @@ NW	1.3808498018261
 ```
 
 ## Settings
-[NW3_DebugPrints](https://github.com/RaphaelIT7/gmod-NW3/blob/ac74a724047d31fa4a8e8bc490b4e27e186bf026/nw/lua/autorun/_sh_nwloader.lua#L2) 
+[DebugPrints](https://github.com/RaphaelIT7/gmod-NW3/blob/99ee87dfdc04d4cc46c82e034165c12bb2ac0d77/nw/lua/autorun/_sh_nwloader.lua#L3) 
 if set to true, it will enable all debug prints.  
-[ReplaceNW](https://github.com/RaphaelIT7/gmod-NW3/blob/ac74a724047d31fa4a8e8bc490b4e27e186bf026/nw/lua/autorun/_sh_nwloader.lua#L20) 
+[ReplaceNW](https://github.com/RaphaelIT7/gmod-NW3/blob/99ee87dfdc04d4cc46c82e034165c12bb2ac0d77/nw/lua/autorun/_sh_nwloader.lua#L4) 
 if set to true, it will, replace the NW System with the NW3 System.
+
+All other values are used Internally and should not be changes.
 
 ## Functions
 It has all the NW2 functions.
