@@ -7,7 +7,7 @@ local IsValid = IsValid
 local GetPos = meta.GetPos
 local insert = table.insert
 local TestPVS = meta.TestPVS
-local DebugPrints = NW3_DebugPrints
+local DebugPrints = NW3.DebugPrints
 local StartsWith = string.StartsWith
 local AddOriginToPVS = AddOriginToPVS
 --[[
@@ -99,7 +99,7 @@ local len = string.len
 local assert = assert
 local istable = istable
 local TableToJSON = util.TableToJSON
-local table_identifyer = string.char(10) .. string.char(10)
+local table_identifyer = NW3.Table_Identifyer
 local SetNW3String = meta.SetNW3String
 function meta:SetNW3Table(name, tbl, pvs)
 	pvs = pvs or false

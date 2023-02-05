@@ -1,13 +1,6 @@
 local nw3_registry = {}
-local types = {
-	[TYPE_BOOL] = "Bool",
-	[TYPE_NUMBER] = "Int",
-	[TYPE_STRING] = "String",
-	[TYPE_ENTITY] = "Entity",
-	[TYPE_VECTOR] = "Vector",
-	[TYPE_ANGLE] = "Angle"
-}
-local float_str = '%.3f'
+local types = NW3.Types
+local float_str = NW3.Float_Str
 local TypeID = TypeID
 local sub = string.sub
 local isstring = isstring
@@ -15,12 +8,12 @@ local isnumber = isnumber
 local tonumber = tonumber
 local format = string.format
 local timer_Simple = timer.Simple
-local DebugPrints = NW3_DebugPrints
+local DebugPrints = NW3.DebugPrints
 local meta = FindMetaTable("Entity")
 local StartsWith = string.StartsWith
 local JSONToTable = util.JSONToTable
 local GetNW2Entity = meta.GetNW2Entity
-local table_identifyer = string.char(10) .. string.char(10) -- Used when networking tables as strings.
+local table_identifyer = NW3.Table_Identifyer -- Used when networking tables as strings.
 --[[
 	This is the NW3 cache.
 	We cache all NW3 Vars here, so we can access then faster.
@@ -32,6 +25,11 @@ hook.Add("EntityNetworkedVarChanged", "NW3_Cache", function(ent, name, old, valu
 	local vars = nw3_registry[ent]
 	if !vars then
 		vars = {}
+	end
+
+	local name_isnumber = tonumber(name)
+	if name_isnumber then
+		name = name_isnumber
 	end
 
 	local var = vars[name]
