@@ -150,6 +150,22 @@ function meta:GetNWEntity(name, fallback)
 end
 
 --[[
+	Default fallback should be ""
+]]
+local fallback_string = ""
+local string_ = "String"
+function meta:GetNWString(name, fallback)
+	fallback = fallback or fallback_string
+	local reg = nw_registry[self]
+	if !reg then return fallback end
+
+	local var = reg[name]
+	if !var or var.type != string_ then return fallback end
+
+	return var.value
+end
+
+--[[
 	Default fallback should be Angle(0, 0, 0)
 ]]
 local fallback_angle = Angle(0, 0, 0)
@@ -309,6 +325,22 @@ hook.Add("NWLoaded", "NW_Cache", function()
 
 			return var.value
 		end
+	end
+
+	--[[
+		Default fallback should be ""
+	]]
+	local fallback_string = ""
+	local string_ = "String"
+	function GetGlobalString(name, fallback)
+		fallback = fallback or fallback_string
+		local reg = nw_registry[ent]
+		if !reg then return fallback end
+
+		local var = reg[name]
+		if !var or var.type != string_ then return fallback end
+
+		return var.value
 	end
 
 	--[[
