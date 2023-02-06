@@ -10,6 +10,7 @@ local format = string.format
 local timer_Simple = timer.Simple
 local DebugPrints = NW3.DebugPrints
 local meta = FindMetaTable("Entity")
+local ent_isvalid = meta.IsValid
 local StartsWith = string.StartsWith
 local JSONToTable = util.JSONToTable
 local GetNW2Entity = meta.GetNW2Entity
