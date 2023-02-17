@@ -21,9 +21,9 @@ local table_identifyer = NW3.Table_Identifyer -- Used when networking tables as 
 	It also allows us to convert some values to the right type right here, instead of doing it in the GetNW3* functions.
 ]]
 hook.Add("EntityNetworkedVarChanged", "NW_Cache", function(ent, name, old, value)
-	if !StartsWith(name, "NW_") then return end -- We want to separate the NW3 Vars from the NW vars.
-	name = sub(name, 4) -- remove NW_
+	if sub(name, 1, 3) != "NW_" then return end -- We want to separate the NW3 Vars from the NW vars.
 	local start = DebugPrints and SysTime()
+	name = sub(name, 4) -- remove NW_
 	local vars = nw_registry[ent]
 	if !vars then
 		vars = {}
@@ -55,14 +55,16 @@ hook.Add("EntityNetworkedVarChanged", "NW_Cache", function(ent, name, old, value
 	--[[
 		Fixes NW2 returning floats like 3.2999999523163 when the value was 3.3
 	]]
+	local number
+	local entity = false
 	if isnumber(value) then
 		value = tonumber(format(float_str, value))
+		goto skip
 	end
 
 	--[[
 		Fixed Entitys being a [NULL Entity] Clientside.
 	]]
-	local entity = false
 	if type == "Entity" and !ent_isvalid(value) then
 		entity = true
 		timer_Simple(0, function()
@@ -70,6 +72,7 @@ hook.Add("EntityNetworkedVarChanged", "NW_Cache", function(ent, name, old, value
 			nw_registry[ent] = var
 			hook.Run("EntityNWVarChanged", ent, name, old, value)
 		end)
+		goto skip
 	end
 
 	--[[
@@ -87,17 +90,20 @@ hook.Add("EntityNetworkedVarChanged", "NW_Cache", function(ent, name, old, value
 			else
 				print("[NW Cache] Failed to read Table!. Entity: " .. (ent:IsPlayer() and ent:Name() or ent:GetClass()) .. " Var: " .. name)
 			end
+			goto skip
 		end
 	end
 
 	--[[
 		Fixes NW2 32Bit int limit by networking values over the limit as a String.
 	]]
-	local number = tonumber(value)
+	number = tonumber(value)
 	if number then
 		var.type = "Int"
 		value = number
 	end
+
+	::skip::
 
 	var.value = value
 	vars[name] = var
@@ -108,7 +114,7 @@ hook.Add("EntityNetworkedVarChanged", "NW_Cache", function(ent, name, old, value
 	end
 
 	if DebugPrints then
-		print("[NW Cache] Updating " .. name .. " on " .. (ent:IsPlayer() and ent:Name() or ent:GetClass()), value, SysTime() - start + 1)
+		print("[NW Cache] Updating " .. name .. " on " .. (ent:IsPlayer() and ent:Name() or ent:GetClass()), old, value, SysTime() - start + 1)
 	end
 end)
 
@@ -213,20 +219,15 @@ function meta:GetNWInt(name, fallback)
 end
 
 --[[
-	GetNW3Float should be able to return Ints so we need to whitelist them.
+	GetNW3Float is using the type int because we currently don't have any checks to determent if the number is a float or not.
 ]]
-local whiteslist_float = {
-	["Float"] = true,
-	["Int"] = true
-}
-local float = "Float"
 function meta:GetNWFloat(name, fallback)
 	fallback = fallback or 0
 	local reg = nw_registry[self]
 	if !reg then return fallback end
 
 	local var = reg[name]
-	if !var or (var.type != float and !whiteslist_float[var.type]) then return fallback end
+	if !var or (var.type != int) then return fallback end
 
 	return var.value
 end

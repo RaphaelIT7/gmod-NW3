@@ -4,10 +4,11 @@
 local meta = FindMetaTable("Entity")
 local StartsWith = string.StartsWith
 local Replace = string.Replace
+local sub = string.sub
 for k, v in pairs(meta) do
 	if !StartsWith(k, "SetNW3") then continue end
 	meta["SetNW"..Replace(k, "SetNW3", "")] = function(self, name, value)
-		if !StartsWith(name, "NW_") then
+		if sub(name, 1, 3) != "NW_" then
 			name = "NW_" .. name
 		end
 

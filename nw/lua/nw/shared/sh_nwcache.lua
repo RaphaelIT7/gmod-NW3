@@ -21,7 +21,7 @@ local table_identifyer = NW3.Table_Identifyer -- Used when networking tables as 
 	It also allows us to convert some values to the right type right here, instead of doing it in the GetNW3* functions.
 ]]
 hook.Add("EntityNetworkedVarChanged", "NW3_Cache", function(ent, name, old, value)
-	if StartsWith(name, "NW_") then return end -- If NW is replaced by NW3, we want to separate the NW Vars.
+	if sub(name, 1, 3) == "NW_" then return end -- If NW is replaced by NW3, we want to separate the NW Vars.
 	local start = DebugPrints and SysTime()
 	local vars = nw3_registry[ent]
 	if !vars then
@@ -54,14 +54,16 @@ hook.Add("EntityNetworkedVarChanged", "NW3_Cache", function(ent, name, old, valu
 	--[[
 		Fixes NW2 returning floats like 3.2999999523163 when the value was 3.3
 	]]
+	local number
+	local entity = false
 	if isnumber(value) then
 		value = tonumber(format(float_str, value))
+		goto skip
 	end
 
 	--[[
 		Fixed Entitys being a [NULL Entity] Clientside.
 	]]
-	local entity = false
 	if type == "Entity" and !ent_isvalid(value) then
 		entity = true
 		timer_Simple(0, function()
@@ -69,6 +71,7 @@ hook.Add("EntityNetworkedVarChanged", "NW3_Cache", function(ent, name, old, valu
 			nw3_registry[ent] = var
 			hook.Run("EntityNW3VarChanged", ent, name, old, value)
 		end)
+		goto skip
 	end
 
 	--[[
@@ -86,17 +89,20 @@ hook.Add("EntityNetworkedVarChanged", "NW3_Cache", function(ent, name, old, valu
 			else
 				print("[NW3 Cache] Failed to read Table!. Entity: " .. (ent:IsPlayer() and ent:Name() or ent:GetClass()) .. " Var: " .. name)
 			end
+			goto skip
 		end
 	end
 
 	--[[
 		Fixes NW2 32Bit int limit by networking values over the limit as a String.
 	]]
-	local number = tonumber(value)
+	number = tonumber(value)
 	if number then
 		type = "Int"
 		value = number
 	end
+
+	::skip::
 
 	var.type = type
 	var.value = value
@@ -108,7 +114,7 @@ hook.Add("EntityNetworkedVarChanged", "NW3_Cache", function(ent, name, old, valu
 	end
 	
 	if DebugPrints then
-		print("[NW3 Cache] Updating " .. name .. " on " .. (ent:IsPlayer() and ent:Name() or ent:GetClass()), value, SysTime() - start + 1) --Debugging print.
+		print("[NW3 Cache] Updating " .. name .. " on " .. (ent:IsPlayer() and ent:Name() or ent:GetClass()), old, value, SysTime() - start + 1) --Debugging print.
 	end
 end)
 
@@ -213,21 +219,16 @@ function meta:GetNW3Int(name, fallback)
 end
 
 --[[
-	GetNW3Float should be able to return Ints so we need to whitelist them.
-	Default fallback should be 0.
+	GetNW3Float is using the type int because we currently don't have any checks to determent if the number is a float or not.
+	Default fallback should be 0
 ]]
-local whiteslist_float = {
-	["Float"] = true,
-	["Int"] = true
-}
-local float = "Float"
 function meta:GetNW3Float(name, fallback)
 	fallback = fallback or 0
 	local reg = nw3_registry[self]
 	if !reg then return fallback end
 
 	local var = reg[name]
-	if !var or (var.type != float and !whiteslist_float[var.type]) then return fallback end
+	if !var or (var.type != int and !whiteslist_float[var.type]) then return fallback end
 
 	return var.value
 end
@@ -399,18 +400,13 @@ hook.Add("NW3Loaded", "NW3_Cache", function()
 	--[[
 		GetNW3Float should be able to return Ints so we need to whitelist them.
 	]]
-	local whiteslist_float = {
-		["Float"] = true,
-		["Int"] = true
-	}
-	local float = "Float"
 	function GetGlobal3Float(name, fallback)
 		fallback = fallback or 0
 		local reg = nw3_registry[ent]
 		if !reg then return fallback end
 
 		local var = reg[name]
-		if !var or (var.type != float and !whiteslist_float[var.type]) then return fallback end
+		if !var or (var.type != int and !whiteslist_float[var.type]) then return fallback end
 
 		return var.value
 	end

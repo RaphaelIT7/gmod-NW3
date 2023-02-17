@@ -7,6 +7,7 @@ local IsValid = IsValid
 local GetPos = meta.GetPos
 local insert = table.insert
 local TestPVS = meta.TestPVS
+local ent_IsValid = meta.IsValid
 local DebugPrints = NW3.DebugPrints
 local StartsWith = string.StartsWith
 local AddOriginToPVS = AddOriginToPVS
@@ -21,8 +22,9 @@ hook.Add("SetupPlayerVisibility", "NW3_AntiPVS", function(ply)
 		print("Updating player: " .. ply:Nick())
 	end
 
-	for k, v in ipairs(tbl) do
-		local pos = IsValid(v) and GetPos(v) or nil
+	for k=1, #tbl do
+		local v = tbl[k]
+		local pos = (v != nil and ent_IsValid(v)) and GetPos(v) or nil
 
 		--[[
 			We're using TestPVS because else we would create engine crashes.
@@ -44,7 +46,9 @@ hook.Add("EntityNetworkedVarChanged", "NW3_AntiPVS", function(ent, name)
 		print("Updating entity " .. ent:GetClass() .. " " .. (ent:IsPlayer() and ent:Nick() or ""))
 	end
 
-	for _, ply in ipairs(player_GetAll()) do
+	local tbl = player_GetAll()
+	for k=1, #tbl do
+		local ply = tbl[k] 
 		if !nw3_updating[ply] then
 			nw3_updating[ply] = {}
 		end
