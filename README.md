@@ -1,6 +1,7 @@
 # NW3 System
 The NW3 System is a combination of the NW and NW2 System.  
 It internally uses the NW2 system for networking, but it allows one to decide if you want to use the PVS or not.  
+I'm going to make a version using the net library in the future.  
 You should not use the NW3 System if you set NW3 vars every tick. It aims to improve the performance of all GetNW3 functions at the cost of the SetNW3 functions.  
 The NW2 System currently collides with the NW3 System. So you can do stuff like this:
 ```lua
